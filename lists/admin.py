@@ -5,5 +5,8 @@ from .models import List
 
 class ListAdmin(admin.ModelAdmin):
     """List Admin Definition"""
+
     pass
-admin.site.register(List,ListAdmin)
+
+
+admin.site.register(List, ListAdmin)
