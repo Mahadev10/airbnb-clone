@@ -6,7 +6,13 @@ from .models import List
 class ListAdmin(admin.ModelAdmin):
     """List Admin Definition"""
 
-    pass
+    list_display = (
+        "name",
+        "user",
+        "count_rooms",
+    )
+    search_fields = ("name",)
+    filter_horizontal = ("rooms",)
 
 
 admin.site.register(List, ListAdmin)

@@ -5,7 +5,7 @@ from . import models
 class ReviewAdmin(admin.ModelAdmin):
     """Review Admin Definition"""
 
-    pass
+    list_display=("__str__","user","rating_average")
 
 
 admin.site.register(models.Review, ReviewAdmin)

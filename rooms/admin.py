@@ -74,6 +74,8 @@ class RoomAdmin(admin.ModelAdmin):
         "instant_book",
         "host",
         "count_amenities",
+        "count_photos",
+        "total_rating",
     )
     ordering = ("name", "price", "bedrooms")
     list_filter = (
@@ -100,17 +102,23 @@ class RoomAdmin(admin.ModelAdmin):
     def count_amenities(self, obj):
         return obj.amenities.count()
 
+    def count_photos(self, obj):
+        return obj.photos.count()
+
 
 class ItemAdmin(admin.ModelAdmin):
     """Item Admin Definition"""
 
-    pass
+    def used_by(self, obj):
+        return obj.rooms.count()
+
+    list_display = ("name", "used_by")
 
 
 class PhotoAdmin(admin.ModelAdmin):
     """Photo Admin Definition"""
 
-    pass
+    list_display = ("caption",)
 
 
 admin.site.register(models.Room, RoomAdmin)
