@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import User
 from django.contrib.auth.admin import UserAdmin
+from django.utils.html import mark_safe
 
 
 class CustomUserAdmin(UserAdmin):
@@ -31,8 +32,14 @@ class CustomUserAdmin(UserAdmin):
         "superhost",
         "is_staff",
         "is_superuser",
+        "get_avatar",
     )
     list_filter = UserAdmin.list_filter + ("superhost",)
+
+    def get_avatar(self, obj):
+        return mark_safe(f'<img height="50px" width="50px" src="{obj.avatar.url}"/>')
+
+    get_avatar.short_description = "Avatar"
 
 
 admin.site.register(User, CustomUserAdmin)
