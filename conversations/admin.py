@@ -11,7 +11,8 @@ class ConversationAdmin(admin.ModelAdmin):
         "count_messages",
         "count_participants",
     )
-
+    filter_horizontal = ("participants",)
+    
 
 class MessageAdmin(admin.ModelAdmin):
     """Message Admin Definition"""

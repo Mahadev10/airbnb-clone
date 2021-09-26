@@ -22,14 +22,14 @@ class Reservation(core_models.TimeStampedModel):
     check_in = models.DateField()
     check_out = models.DateField()
     guest = models.ForeignKey("users.User", on_delete=models.CASCADE)
-    room = models.ForeignKey("rooms.Room", on_delete=models.CASCADE)
+    room = models.ForeignKey("rooms.Room", on_delete=models.CASCADE,related_name="reservations")
 
     def __str__(self) -> str:
         return f"{self.room} - {self.check_in}"
 
     def in_progress(self):
         now = timezone.now().date()
-        return now > self.check_in and now < self.check_out
+        return now >= self.check_in and now <= self.check_out
 
     in_progress.boolean = True
 
