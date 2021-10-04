@@ -33,6 +33,7 @@ class Command(BaseCommand):
                 "beds": lambda _: random.randint(0, 5),
                 "bedrooms": lambda _: random.randint(0, 5),
                 "baths": lambda _: random.randint(0, 5),
+                "country": "IN",
             },
         )
         created_photos = seeder.execute()
