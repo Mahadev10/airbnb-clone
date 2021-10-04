@@ -17,6 +17,7 @@ class CustomUserAdmin(UserAdmin):
                     "language",
                     "currency",
                     "superhost",
+                    "login_method",
                 ),
             },
         ),
@@ -32,12 +33,19 @@ class CustomUserAdmin(UserAdmin):
         "superhost",
         "is_staff",
         "is_superuser",
+        "email_verified",
+        "email_secret",
+        "login_method",
         "get_avatar",
     )
     list_filter = UserAdmin.list_filter + ("superhost",)
 
     def get_avatar(self, obj):
-        return mark_safe(f'<img height="50px" width="50px" src="{obj.avatar.url}"/>')
+        if obj.avatar:
+            return mark_safe(
+                f'<img height="50px" width="50px" src="{obj.avatar.url}"/>'
+            )
+        return ""
 
     get_avatar.short_description = "Avatar"
 
