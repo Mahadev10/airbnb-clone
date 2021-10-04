@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block page_title %}
+search
+{% endblock page_title %}
+
+{% block search-bar %}{% endblock search-bar %}
+{% block content %}
+<form action="{% url "rooms:search" %}">
+        {{form.as_p}}
+        <input type="submit" value="search">
+</form>
+<h2>Total rooms found :{{rooms.count}}</h2>
+{% for room in rooms %}
+<h2>
+  {{forloop.counter}})<a href="{% url 'rooms:detail' room.pk %}" >{{room.name}}</a>
+  Id;{{room.id}}
+</h2> 
+{% endfor %}
+{% endblock content %}
