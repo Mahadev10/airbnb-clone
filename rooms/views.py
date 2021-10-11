@@ -9,9 +9,9 @@ from .forms import SearchForm
 
 class HomeView(ListView):
     model = models.Room
-    template_name = "rooms/all_rooms.html"
+    template_name = "rooms/rooms_list.html"
     context_object_name = "rooms"
-    paginate_by = 10
+    paginate_by = 12
     paginate_orphans = 5
 
     def get_context_data(self, **kwargs):
