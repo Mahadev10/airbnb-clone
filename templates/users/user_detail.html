@@ -17,7 +17,7 @@
 
         <span class="text-lg mb-5 text-center mt-3">{{user_obj.bio}}</span>
         {% if user == user_obj %}
-        <a href="#" class="btn-link">Update Profile</a>
+        <a href="{% url "users:update" %}" class="btn-link">Update Profile</a>
         {% endif %}
     </div>
     <div class="container lg:w-5/12 md:w-1/2 xl:w-1/4 mx-auto">
