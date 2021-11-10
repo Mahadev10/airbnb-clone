@@ -92,9 +92,13 @@ class Room(core_models.TimeStampedModel):
         if total_reviews.count() > 0:
             for review in total_reviews:
                 sum += review.rating_average()
-            return round(sum / total_reviews.count(),2)
+            return round(sum / total_reviews.count(), 2)
         return 0
 
     def first_photo(self):
         (photo,) = self.photos.all()[:1]
         return photo.file.url
+
+    def get_next_four_photos(self):
+        photos = self.photos.all()[1:5]
+        return photos
