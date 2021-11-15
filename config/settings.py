@@ -41,6 +41,7 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     "django_countries",
     "django_seed",
+    "django_cleanup"
 ]
 PROJECT_APPS = [
     "users.apps.UsersConfig",
@@ -150,3 +151,7 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = os.environ.get("GMAIL_USERNAME")
 EMAIL_HOST_PASSWORD = os.environ.get("GMAIL_PASSWORD")
 EMAIL_USE_TLS = True
+
+# Auth
+
+LOGINN_URL = "/users/login"

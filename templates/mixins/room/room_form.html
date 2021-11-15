@@ -1,0 +1,15 @@
+<form  method="POST" class="w-full" {% if upload %}enctype="multipart/form-data"{% endif %}>
+    {% csrf_token %}
+    <div class="input">
+        {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+                <span class="text-red-700 font-medium text-sm">{{error}}</span>
+            {% endfor %}
+        {% endif %}
+    </div>
+    {% for field in form %}
+        {% include "mixins/room/room_input.html" with field=field %}
+    {% endfor %}
+
+    <button type="submit" class="btn text-white bg-red-500">{{cta}}</button>
+</form>

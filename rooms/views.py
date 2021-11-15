@@ -1,10 +1,16 @@
+from django.http.response import Http404
 from django.utils import timezone
-from django.shortcuts import render
-from django.views.generic import ListView, DetailView
+from django.shortcuts import redirect, render
+from django.views.generic import ListView, DetailView, UpdateView
+from django.views.generic.edit import FormView
 from django.db.models import Count
+from django.contrib.auth.decorators import login_required
+from django.urls import reverse
+from django.contrib import messages
+from users import mixins as user_mixins
 from . import models
 from rooms import models as room_models
-from .forms import SearchForm
+from .forms import SearchForm, CreatePhotoForm
 
 
 class HomeView(ListView):
@@ -92,3 +98,85 @@ def search(request):
     else:
         form = SearchForm()
     return render(request, "rooms/search.html", context={"form": form})
+
+
+class EditRoomView(user_mixins.LoginOnlyView, UpdateView):
+    model = models.Room
+    template_name = "rooms/room_edit.html"
+    fields = (
+        "name",
+        "description",
+        "country",
+        "city",
+        "price",
+        "address",
+        "guests",
+        "beds",
+        "bedrooms",
+        "baths",
+        "check_in",
+        "check_out",
+        "instant_book",
+        "room_type",
+        "amenities",
+        "facilities",
+        "house_rules",
+    )
+
+    def get_object(self, queryset=None):
+        room = super().get_object(queryset=queryset)
+        if room.host.pk != self.request.user.pk:
+            raise Http404
+        return room
+
+
+class RoomPhotosView(user_mixins.LoginOnlyView, RoomDetail):
+    model = models.Room
+    template_name = "rooms/room_photos.html"
+
+    def get_object(self, queryset=None):
+        room = super().get_object(queryset=queryset)
+        if room.host.pk != self.request.user.pk:
+            raise Http404
+        return room
+
+
+@login_required
+def delete_photo(request, room_pk, photo_pk):
+    user = request.user
+    try:
+        room = models.Room.objects.get(pk=room_pk)
+        if room.host.pk != user.pk:
+            messages.error(request, "Cant delete that photo")
+        else:
+            models.Photo.objects.filter(pk=photo_pk).delete()
+            messages.success(request, "Photo Delted")
+    except models.Room.DoesNotExist:
+        return redirect("core:home")
+    return redirect(reverse("rooms:photos", kwargs={"pk": room_pk}))
+
+
+class EditPhotoView(user_mixins.LoginOnlyView, UpdateView):
+
+    model = models.Photo
+    pk_url_kwarg = "photo_pk"
+    template_name = "rooms/photo_edit.html"
+    fields = ("caption",)
+
+    def get_success_url(self):
+        room_pk = self.kwargs.get("room_pk")
+        messages.success(self.request, "Photo Updated")
+        return reverse("rooms:photos", args=[room_pk])
+
+
+class AddPhotoView(user_mixins.LoginOnlyView, FormView):
+    model = models.Photo
+    template_name = "rooms/photo_create.html"
+    fields = ("caption", "file")
+    form_class = CreatePhotoForm
+
+    def form_valid(self, form):
+        pk = self.kwargs.get("pk")
+        form.save(pk)
+        messages.success(self.request,"Photo Uploaded")
+        return redirect(reverse("rooms:photos", args=[pk]))
