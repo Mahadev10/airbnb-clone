@@ -7,6 +7,7 @@ from django.urls import reverse_lazy
 from django.views.generic import FormView, DetailView, UpdateView
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 from .forms import LoginForm, SignUpForm
 from django.contrib.auth import authenticate, login, logout
 from . import models, mixins
@@ -31,6 +32,8 @@ class LoginView(mixins.LogoutOnlyView, FormView):
             return next_argm
         else:
             return reverse("core:home")
+
+
 class SignUpView(FormView):
     template_name = "users/signup.html"
     form_class = SignUpForm
@@ -177,7 +180,12 @@ class UpdateProfileView(SuccessMessageMixin, UpdateView):
         return form
 
 
-class UpdatePasswordView(mixins.EmailLoginOnlyView, mixins.LoginOnlyView, SuccessMessageMixin, PasswordChangeView):
+class UpdatePasswordView(
+    mixins.EmailLoginOnlyView,
+    mixins.LoginOnlyView,
+    SuccessMessageMixin,
+    PasswordChangeView,
+):
 
     template_name = "users/update-password.html"
     success_message = "Password Updated"
@@ -193,3 +201,12 @@ class UpdatePasswordView(mixins.EmailLoginOnlyView, mixins.LoginOnlyView, Succes
 
     def get_success_url(self):
         return self.request.user.get_absolute_url()
+
+
+@login_required
+def switch_hosting(request):
+    try:
+        del request.session["is_hosting"]
+    except KeyError:
+        request.session["is_hosting"] = True
+    return redirect(reverse("core:home"))    

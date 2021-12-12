@@ -10,7 +10,7 @@ from django.contrib import messages
 from users import mixins as user_mixins
 from . import models
 from rooms import models as room_models
-from .forms import SearchForm, CreatePhotoForm
+from .forms import SearchForm, CreatePhotoForm, CreateRoomForm
 
 
 class HomeView(ListView):
@@ -178,5 +178,18 @@ class AddPhotoView(user_mixins.LoginOnlyView, FormView):
     def form_valid(self, form):
         pk = self.kwargs.get("pk")
         form.save(pk)
-        messages.success(self.request,"Photo Uploaded")
+        messages.success(self.request, "Photo Uploaded")
         return redirect(reverse("rooms:photos", args=[pk]))
+
+
+class CreateRoomView(user_mixins.LoginOnlyView, FormView):
+    form_class = CreateRoomForm
+    template_name = "rooms/room_create.html"
+
+    def form_valid(self, form):
+        room = form.save()
+        room.host = self.request.user
+        room.save()
+        form.save_m2m()
+        messages.success(self.request, "Room Created")
+        return redirect(reverse("rooms:detail", args=[room.pk]))
